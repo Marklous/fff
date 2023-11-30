@@ -73,7 +73,7 @@ SOFTWARE.
     memcpy((void*)&FUNCNAME##_fake.arg##n##_val, (void*)&arg##n, sizeof(arg##n));
 
 #define ROOM_FOR_MORE_HISTORY(FUNCNAME) \
-    FUNCNAME##_fake.call_count < FFF_ARG_HISTORY_LEN
+    FUNCNAME##_fake.arg_history_len < FFF_ARG_HISTORY_LEN
 
 #define SAVE_RET_HISTORY(FUNCNAME, RETVAL) \
     if ((FUNCNAME##_fake.call_count - 1) < FFF_ARG_HISTORY_LEN) \
@@ -81,6 +81,9 @@ SOFTWARE.
 
 #define SAVE_ARG_HISTORY(FUNCNAME, ARGN) \
     memcpy((void*)&FUNCNAME##_fake.arg##ARGN##_history[FUNCNAME##_fake.call_count], (void*)&arg##ARGN, sizeof(arg##ARGN));
+
+#define HISTORY_ARG_SAVED(FUNCNAME); \
+    FUNCNAME##_fake.arg_history_len++
 
 #define HISTORY_DROPPED(FUNCNAME) \
     FUNCNAME##_fake.arg_histories_dropped++
@@ -123,7 +126,9 @@ SOFTWARE.
         memset((void*)&FUNCNAME##_fake, 0, sizeof(FUNCNAME##_fake) - sizeof(FUNCNAME##_fake.custom_fake) - sizeof(FUNCNAME##_fake.custom_fake_seq)); \
         FUNCNAME##_fake.custom_fake = NULL; \
         FUNCNAME##_fake.custom_fake_seq = NULL; \
-        FUNCNAME##_fake.arg_history_len = FFF_ARG_HISTORY_LEN; \
+        FUNCNAME##_fake.arg_history_len = 0; \
+        FUNCNAME##_fake.arg_histories_dropped = 0; \
+        FUNCNAME##_fake.call_count = 0; \
     }
 /* -- END INTERNAL HELPER MACROS -- */
 
@@ -208,6 +213,7 @@ FFF_END_EXTERN_C
         SAVE_ARG(FUNCNAME, 0); \
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -254,6 +260,7 @@ FFF_END_EXTERN_C
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -303,6 +310,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -355,6 +363,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -410,6 +419,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -468,6 +478,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -529,6 +540,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -593,6 +605,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -660,6 +673,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -730,6 +744,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -803,6 +818,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -879,6 +895,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -958,6 +975,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1040,6 +1058,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1125,6 +1144,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1213,6 +1233,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1304,6 +1325,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1398,6 +1420,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1495,6 +1518,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
             SAVE_ARG_HISTORY(FUNCNAME, 18); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1595,6 +1619,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
             SAVE_ARG_HISTORY(FUNCNAME, 18); \
             SAVE_ARG_HISTORY(FUNCNAME, 19); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1689,6 +1714,7 @@ FFF_END_EXTERN_C
         SAVE_ARG(FUNCNAME, 0); \
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1744,6 +1770,7 @@ FFF_END_EXTERN_C
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1802,6 +1829,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1863,6 +1891,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1927,6 +1956,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -1994,6 +2024,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2064,6 +2095,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2137,6 +2169,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2213,6 +2246,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2292,6 +2326,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2374,6 +2409,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2459,6 +2495,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2547,6 +2584,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2638,6 +2676,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2732,6 +2771,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2829,6 +2869,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -2929,6 +2970,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3032,6 +3074,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3138,6 +3181,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
             SAVE_ARG_HISTORY(FUNCNAME, 18); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3247,6 +3291,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
             SAVE_ARG_HISTORY(FUNCNAME, 18); \
             SAVE_ARG_HISTORY(FUNCNAME, 19); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3297,6 +3342,7 @@ FFF_END_EXTERN_C
         SAVE_ARG(FUNCNAME, 0); \
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3352,6 +3398,7 @@ FFF_END_EXTERN_C
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3410,6 +3457,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3471,6 +3519,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3535,6 +3584,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3602,6 +3652,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3672,6 +3723,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3745,6 +3797,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3821,6 +3874,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3900,6 +3954,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -3982,6 +4037,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4067,6 +4123,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4155,6 +4212,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4246,6 +4304,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4340,6 +4399,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4437,6 +4497,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4537,6 +4598,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4640,6 +4702,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4746,6 +4809,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
             SAVE_ARG_HISTORY(FUNCNAME, 18); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4800,6 +4864,7 @@ FFF_END_EXTERN_C
         SAVE_ARG(FUNCNAME, 0); \
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4865,6 +4930,7 @@ FFF_END_EXTERN_C
         if(ROOM_FOR_MORE_HISTORY(FUNCNAME)){ \
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -4933,6 +4999,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 0); \
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5004,6 +5071,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 1); \
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5078,6 +5146,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 2); \
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5155,6 +5224,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 3); \
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5235,6 +5305,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 4); \
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5318,6 +5389,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 5); \
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5404,6 +5476,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 6); \
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5493,6 +5566,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 7); \
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5585,6 +5659,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 8); \
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5680,6 +5755,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 9); \
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5778,6 +5854,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 10); \
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5879,6 +5956,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 11); \
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -5983,6 +6061,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 12); \
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -6090,6 +6169,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 13); \
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -6200,6 +6280,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 14); \
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -6313,6 +6394,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 15); \
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -6429,6 +6511,7 @@ FFF_END_EXTERN_C
             SAVE_ARG_HISTORY(FUNCNAME, 16); \
             SAVE_ARG_HISTORY(FUNCNAME, 17); \
             SAVE_ARG_HISTORY(FUNCNAME, 18); \
+            HISTORY_ARG_SAVED(FUNCNAME); \
         } \
         else{ \
             HISTORY_DROPPED(FUNCNAME); \
@@ -6586,3 +6669,4 @@ FFF_END_EXTERN_C
 
 
 #endif /* FAKE_FUNCTIONS */
+
